@@ -7,6 +7,7 @@ use AppBundle\Form\TaskType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
 {
@@ -29,6 +30,8 @@ class TaskController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+
+            $task->setUser($this->getUser());
             $em = $this->getDoctrine()->getManager();
 
             $em->persist($task);
@@ -36,9 +39,9 @@ class TaskController extends Controller
 
             $this->addFlash('success', 'La tâche a été bien été ajoutée.');
 
+
             return $this->redirectToRoute('task_list');
         }
-
         return $this->render('task/create.html.twig', ['form' => $form->createView()]);
     }
 
@@ -58,7 +61,7 @@ class TaskController extends Controller
 
             return $this->redirectToRoute('task_list');
         }
-
+var_dump($task->getUser());
         return $this->render('task/edit.html.twig', [
             'form' => $form->createView(),
             'task' => $task,
