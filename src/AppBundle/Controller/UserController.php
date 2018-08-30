@@ -36,7 +36,7 @@ class UserController extends Controller
             $em->persist($user);
             $em->flush();
 
-            $this->addFlash('success', "L'utilisateur a bien été ajouté.");
+            $this->addFlash('success', "Vous avez créé un utilisateur.");
 
             return $this->redirectToRoute('user_list');
         }

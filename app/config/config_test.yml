@@ -16,6 +16,9 @@ swiftmailer:
     disable_delivery: true
 
 security:
+    encoders:
+            AppBundle\Entity\User: plaintext
+
     firewalls:
         main:
             http_basic: ~

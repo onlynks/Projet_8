@@ -29,8 +29,6 @@ class DefaultControllerTest extends WebTestCase
 
         $client->request(Request::METHOD_GET, '/');
 
-
-
         static::assertEquals(
             200,
             $client->getResponse()->getStatusCode()
