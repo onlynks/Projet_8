@@ -4,23 +4,29 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Task;
 use AppBundle\Form\TaskType;
+use Doctrine\ORM\EntityManagerInterface;
+use http\Env\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
 {
     /**
      * @Route("/tasks", name="task_list")
+     * @Method("GET")
      */
-    public function listAction()
+    public function listAction(EntityManagerInterface $em)
     {
-        return $this->render('task/list.html.twig', ['tasks' => $this->getDoctrine()->getRepository('AppBundle:Task')->findAll()]);
+        return $this->render('task/list.html.twig', [
+            'tasks' => $em->getRepository('AppBundle:Task')->findAll(),
+        ]);
     }
 
     /**
      * @Route("/tasks/create", name="task_create")
+     * @Method({"POST", "GET"})
      */
     public function createAction(Request $request)
     {
@@ -29,7 +35,7 @@ class TaskController extends Controller
 
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $task->setUser($this->getUser());
             $em = $this->getDoctrine()->getManager();
@@ -37,7 +43,7 @@ class TaskController extends Controller
             $em->persist($task);
             $em->flush();
 
-            $this->addFlash('success', 'La tâche a été bien été ajoutée.');
+            $this->addFlash('success', 'La tâche a bien été ajoutée.');
 
 
             return $this->redirectToRoute('task_list');
@@ -61,7 +67,6 @@ class TaskController extends Controller
 
             return $this->redirectToRoute('task_list');
         }
-var_dump($task->getUser());
         return $this->render('task/edit.html.twig', [
             'form' => $form->createView(),
             'task' => $task,
@@ -86,6 +91,25 @@ var_dump($task->getUser());
      */
     public function deleteTaskAction(Task $task)
     {
+        $admin = $this->getUser()->getRoles() === ['ROLE_ADMIN'];
+
+        if($task->getUser() == null || $task->getUser() != $this->getUser())
+        {
+            if($admin)
+            {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($task);
+                $em->flush();
+
+                $this->addFlash('success', 'La tâche a bien été supprimée.');
+
+                return $this->redirectToRoute('task_list');
+            }
+
+            $this->addFlash('error','Vous devez être administrateur pour supprimer cette tâche.');
+
+            return $this->redirectToRoute('task_list');
+        }
         $em = $this->getDoctrine()->getManager();
         $em->remove($task);
         $em->flush();
