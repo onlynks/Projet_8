@@ -45,6 +45,7 @@ class TaskControllerTest extends WebTestCase
             $taskName[] = $task->getTitle();
         }
 
+        $this->assertEquals(count($data), count($taskName));
         $this->assertSame($data, $taskName);
     }
 
