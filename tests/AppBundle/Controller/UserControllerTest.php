@@ -2,23 +2,12 @@
 
 namespace Tests\AppBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use AppBundle\Entity\User;
 use Symfony\Component\DomCrawler\Crawler;
+use Tests\AppBundle\BootTest;
 
-class UserControllerTest extends WebTestCase
+class UserControllerTest extends BootTest
 {
-    private $em;
-
-    protected function setUp()
-    {
-        $kernel = self::bootKernel();
-
-        $this->em = $kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-    }
-
     public function testList() {
         $em = $this->em;
 
@@ -76,10 +65,7 @@ class UserControllerTest extends WebTestCase
 
         $user = $this->em->getRepository(User::class)->findByUsername('testMan')[0];
 
-        $client = static::createClient(array(), array(
-            'PHP_AUTH_USER' => 'admin',
-            'PHP_AUTH_PW'   => 'admin',
-        ));
+        $client = static::logAsAdmin();
 
         $crawler = $client->request('GET', '/users/'.$user->getId().'/edit');
 

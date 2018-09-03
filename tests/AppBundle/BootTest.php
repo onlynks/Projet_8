@@ -6,8 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class BootTest extends WebTestCase
 {
-    protected $client;
-
     protected $em;
 
     protected function setUp()
@@ -17,8 +15,17 @@ class BootTest extends WebTestCase
         $this->em = $kernel->getContainer()
             ->get('doctrine')
             ->getManager();
+    }
 
-        $this->client = static::createClient(array(), array(
+    protected static function logAsUser() {
+        return static::createClient(array(), array(
+            'PHP_AUTH_USER' => 'user',
+            'PHP_AUTH_PW'   => 'user',
+        ));
+    }
+
+    protected static function logAsAdmin() {
+        return  static::createClient(array(), array(
             'PHP_AUTH_USER' => 'admin',
             'PHP_AUTH_PW'   => 'admin',
         ));
