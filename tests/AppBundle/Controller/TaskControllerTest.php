@@ -2,30 +2,16 @@
 
 namespace Tests\AppBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use AppBundle\Entity\Task;
+use Tests\AppBundle\BootTest;
 
-class TaskControllerTest extends WebTestCase
+class TaskControllerTest extends BootTest
 {
-    private $em;
-
-    protected function setUp()
-    {
-        $kernel = self::bootKernel();
-
-        $this->em = $kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-    }
-
     public function testList()
     {
         $em = $this->em;
 
-        $client = static::createClient(array(), array(
-            'PHP_AUTH_USER' => 'admin',
-            'PHP_AUTH_PW'   => 'admin',
-        ));
+        $client = static::logAsAdmin();
 
         $crawler = $client->request('GET','/tasks');
 
@@ -50,10 +36,7 @@ class TaskControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $client = static::createClient(array(), array(
-            'PHP_AUTH_USER' => 'admin',
-            'PHP_AUTH_PW'   => 'admin',
-        ));
+        $client = static::logAsAdmin();
 
         $crawler = $client->request('GET', '/tasks/create');
 
@@ -72,10 +55,7 @@ class TaskControllerTest extends WebTestCase
 
     public function testDelete()
     {
-        $client = static::createClient(array(), array(
-            'PHP_AUTH_USER' => 'admin',
-            'PHP_AUTH_PW'   => 'admin',
-        ));
+        $client = static::logAsAdmin();
 
         $task = new Task();
         $task->setTitle('test');
@@ -101,10 +81,7 @@ class TaskControllerTest extends WebTestCase
 
         $task = $this->em->getRepository(Task::class)->getLast();
 
-        $client = static::createClient(array(), array(
-            'PHP_AUTH_USER' => 'admin',
-            'PHP_AUTH_PW'   => 'admin',
-        ));
+        $client = static::logAsAdmin();
 
         $crawler = $client->request('GET', '/tasks/'.$task->getId().'/edit');
 
@@ -129,10 +106,7 @@ class TaskControllerTest extends WebTestCase
 
     public function testToggle() {
 
-        $client = static::createClient(array(), array(
-            'PHP_AUTH_USER' => 'admin',
-            'PHP_AUTH_PW'   => 'admin',
-        ));
+        $client = static::logAsAdmin();
 
         $task = new Task();
         $task->setTitle('test toggle');
