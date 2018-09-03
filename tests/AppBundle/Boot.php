@@ -4,7 +4,7 @@ namespace Tests\AppBundle;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class BootTest extends WebTestCase
+class Boot extends WebTestCase
 {
     protected $em;
 

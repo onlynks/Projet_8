@@ -3,9 +3,9 @@
 namespace Tests\AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Tests\AppBundle\BootTest;
+use Tests\AppBundle\Boot;
 
-class DefaultControllerTest extends BootTest
+class DefaultControllerTest extends Boot
 {
     public function testHomepageNoUser()
     {

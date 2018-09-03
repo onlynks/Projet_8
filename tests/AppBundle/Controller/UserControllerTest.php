@@ -4,9 +4,9 @@ namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use Symfony\Component\DomCrawler\Crawler;
-use Tests\AppBundle\BootTest;
+use Tests\AppBundle\Boot;
 
-class UserControllerTest extends BootTest
+class UserControllerTest extends Boot
 {
     public function testList() {
         $em = $this->em;

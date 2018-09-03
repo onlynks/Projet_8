@@ -3,9 +3,9 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Task;
-use Tests\AppBundle\BootTest;
+use Tests\AppBundle\Boot;
 
-class TaskControllerTest extends BootTest
+class TaskControllerTest extends Boot
 {
     public function testList()
     {
