@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle;
 
+use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -16,6 +17,23 @@ class Boot extends WebTestCase
         $this->em = $kernel->getContainer()
             ->get('doctrine')
             ->getManager();
+
+        $admin = new User();
+        $admin->setUsername('admin');
+        $admin->setPassword('admin');
+        $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setEmail('admin@gmail.com');
+
+        $this->em->persist($admin);
+
+        $user = new User();
+        $user->setUsername('user');
+        $user->setPassword('user');
+        $user->setRoles(['ROLE_USER']);
+        $user->setEmail('user@gmail.com');
+
+        $this->em->persist($user);
+        $this->em->flush();
     }
 
     protected static function logAsUser() {
@@ -32,15 +50,34 @@ class Boot extends WebTestCase
         ));
     }
 
+    protected function createRandomTask() {
+
+        $task = new Task();
+        $task->setTitle('taskTest');
+        $task->setContent('taskContentTest');
+
+        $this->em->persist($task);
+        $this->em->flush();
+
+        $lastTask = $this->em->getRepository(Task::class)->getLast();
+
+        return $lastTask;
+    }
+
     protected function tearDown()
     {
-        $usersCreated = $this->em->getRepository(User::class)->findByUsername('testUser');
+        $tasksCreated= $this->em->getRepository(Task::class)->findAll();
 
-        if($usersCreated) {
-            foreach($usersCreated as $userCreated) {
-                $this->em->remove($userCreated);
-                $this->em->flush();
-            }
+        foreach($tasksCreated as $task) {
+            $this->em->remove($task);
+            $this->em->flush();
+        }
+
+        $usersCreated = $this->em->getRepository(User::class)->findAll();
+
+        foreach($usersCreated as $user) {
+            $this->em->remove($user);
+            $this->em->flush();
         }
     }
 

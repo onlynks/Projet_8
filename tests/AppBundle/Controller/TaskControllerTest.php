@@ -82,18 +82,24 @@ class TaskControllerTest extends Boot
 
         $client = static::logAsUser();
 
-        $em = $this->em;
-        $admin = $em->getRepository(User::class)->findByUsername('admin');
+        $task = $this->createRandomTask();
 
-        var_dump($admin);
+        $crawler = $client->request('GET', '/tasks');
 
-        //$crawler = $client->request('GET','tasks');
+        $form = $crawler->filter('form[action="/tasks/'.$task->getId().'/delete"] > button')->form();
+        $client->submit($form);
+
+        $client->followRedirect();
+
+        $content = $client->getResponse()->getContent();
+
+        $this->assertContains('Vous devez être administrateur pour supprimer cette tâche.', $content);
 
     }
 
     public function testUpdate() {
 
-        $task = $this->em->getRepository(Task::class)->getLast();
+        $task = $this->createRandomTask();
 
         $client = static::logAsAdmin();
 

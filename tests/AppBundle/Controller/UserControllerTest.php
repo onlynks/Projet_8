@@ -84,16 +84,4 @@ class UserControllerTest extends Boot
         $this->assertSame($userPassword, $updatedUser->getPassword());
     }
 
-    protected function tearDown()
-    {
-        $usersCreated = $this->em->getRepository(User::class)->findByUsername('testUser');
-
-        if($usersCreated) {
-            foreach($usersCreated as $userCreated) {
-                $this->em->remove($userCreated);
-                $this->em->flush();
-            }
-        }
-    }
-
 }
