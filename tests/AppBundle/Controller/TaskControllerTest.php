@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Task;
+use AppBundle\Entity\User;
 use Tests\AppBundle\Boot;
 
 class TaskControllerTest extends Boot
@@ -75,6 +76,19 @@ class TaskControllerTest extends Boot
         $content = $client->getResponse()->getContent();
 
         $this->assertContains('La tâche a bien été supprimée.', $content);
+    }
+
+    public function testDeleteNoAuthor() {
+
+        $client = static::logAsUser();
+
+        $em = $this->em;
+        $admin = $em->getRepository(User::class)->findByUsername('admin');
+
+        var_dump($admin);
+
+        //$crawler = $client->request('GET','tasks');
+
     }
 
     public function testUpdate() {

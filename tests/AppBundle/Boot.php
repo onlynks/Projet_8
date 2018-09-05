@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle;
 
+use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class Boot extends WebTestCase
@@ -29,6 +30,18 @@ class Boot extends WebTestCase
             'PHP_AUTH_USER' => 'admin',
             'PHP_AUTH_PW'   => 'admin',
         ));
+    }
+
+    protected function tearDown()
+    {
+        $usersCreated = $this->em->getRepository(User::class)->findByUsername('testUser');
+
+        if($usersCreated) {
+            foreach($usersCreated as $userCreated) {
+                $this->em->remove($userCreated);
+                $this->em->flush();
+            }
+        }
     }
 
 

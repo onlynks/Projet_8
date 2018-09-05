@@ -37,7 +37,7 @@ class UserControllerTest extends Boot
         $crawler = $client->request('GET', '/users/create');
 
         $form = $crawler->selectButton('Ajouter')->form([
-            'user[username]' => 'testMan',
+            'user[username]' => 'testUser',
             'user[password][first]' => 'testPass',
             'user[password][second]' => 'testPass',
             'user[email]' => 'testmail@gmail.com',
@@ -56,14 +56,14 @@ class UserControllerTest extends Boot
     public function testUpdate() {
 
         $user = new User();
-        $user->setUsername('testMan');
+        $user->setUsername('testUser');
         $user->setPassword('test');
         $user->setEmail('test@gmail.com');
         $user->setRoles('ROLE_USER');
         $this->em->persist($user);
         $this->em->flush();
 
-        $user = $this->em->getRepository(User::class)->findByUsername('testMan')[0];
+        $user = $this->em->getRepository(User::class)->findByUsername('testUser')[0];
 
         $client = static::logAsAdmin();
 
@@ -86,7 +86,7 @@ class UserControllerTest extends Boot
 
     protected function tearDown()
     {
-        $usersCreated = $this->em->getRepository(User::class)->findByUsername('testMan');
+        $usersCreated = $this->em->getRepository(User::class)->findByUsername('testUser');
 
         if($usersCreated) {
             foreach($usersCreated as $userCreated) {

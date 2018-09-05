@@ -15,6 +15,16 @@ web_profiler:
 swiftmailer:
     disable_delivery: true
 
+doctrine:
+    dbal:
+        driver:   pdo_mysql
+        host:     "%database_host%"
+        port:     "%database_port%"
+        dbname:   "projet_8_test"
+        user:     "%database_user%"
+        password: "%database_password%"
+        charset:  UTF8
+
 security:
     encoders:
             AppBundle\Entity\User: plaintext
