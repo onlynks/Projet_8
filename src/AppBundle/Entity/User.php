@@ -97,4 +97,9 @@ class User implements UserInterface
     public function eraseCredentials()
     {
     }
+
+    public function isAdmin()
+    {
+        return ($this->getRoles() === ['ROLE_ADMIN']) ?: false;
+    }
 }
