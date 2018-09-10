@@ -7,7 +7,7 @@ abstract class FindRedirect
 
     protected $regex = [
         'delete' => ['#(^/?tasks/[0-9][0-9]?[0_9]?/delete$)+#', 'task_list'],
-        'update' => '#(^/?tasks/[0-9][0-9]?[0_9]?/update)+#',
+        'update' => ['#(^/?tasks/[0-9][0-9]?[0_9]?/update)+#', 'task_edit'],
         ]
     ;
 

@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 
 
@@ -91,26 +92,8 @@ class TaskController extends Controller
      */
     public function deleteTaskAction(Task $task, Request $request)
     {
-        $admin = $this->getUser()->getRoles() === ['ROLE_ADMIN'];
-        //$this->denyAccessUnlessGranted('delete', $task);
+        $this->denyAccessUnlessGranted('delete', $task);
 
-        if($task->getUser() == null || $task->getUser() != $this->getUser())
-        {
-            if($admin)
-            {
-                $em = $this->getDoctrine()->getManager();
-                $em->remove($task);
-                $em->flush();
-
-                $this->addFlash('success', 'La tâche a bien été supprimée.');
-
-                return $this->redirectToRoute('task_list');
-            }
-
-            $this->addFlash('error','Vous devez être administrateur pour supprimer cette tâche.');
-
-            return $this->redirectToRoute('task_list');
-        }
         $em = $this->getDoctrine()->getManager();
         $em->remove($task);
         $em->flush();
