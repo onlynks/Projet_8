@@ -17,7 +17,6 @@ class TaskControllerTest extends Boot
         $crawler = $client->request('GET','/tasks');
 
         $selections = $crawler->filter('div > h4 > a')->links();
-
         $data = [];
 
         foreach ($selections as $selection){
@@ -93,7 +92,7 @@ class TaskControllerTest extends Boot
 
         $content = $client->getResponse()->getContent();
 
-        $this->assertContains('Vous devez être administrateur pour supprimer cette tâche.', $content);
+        $this->assertContains('Vous n\'avez pas les droits nécessaires pour supprimer cette tâche.', $content);
 
     }
 

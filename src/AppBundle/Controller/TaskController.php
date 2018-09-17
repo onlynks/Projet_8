@@ -4,30 +4,29 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Task;
 use AppBundle\Form\TaskType;
+use AppBundle\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\{Request,Response};
 
 
 class TaskController extends Controller
 {
     /**
-     * @Route("/tasks", name="task_list")
-     * @Method("GET")
+     * @Route("/tasks", name="task_list",methods={"GET"})
      */
-    public function listAction(EntityManagerInterface $em)
+    public function listAction(TaskRepository $repository)
     {
         return $this->render('task/list.html.twig', [
-            'tasks' => $em->getRepository('AppBundle:Task')->findAll(),
+            'tasks' => $repository->findAll(),
         ]);
     }
 
     /**
-     * @Route("/tasks/create", name="task_create")
-     * @Method({"POST", "GET"})
+     * @Route("/tasks/create", name="task_create", methods={"POST", "GET"})
      */
     public function createAction(Request $request)
     {
@@ -90,7 +89,7 @@ class TaskController extends Controller
     /**
      * @Route("/tasks/{id}/delete", name="task_delete")
      */
-    public function deleteTaskAction(Task $task, Request $request)
+    public function deleteTaskAction(Task $task, Request $request): Response
     {
         $this->denyAccessUnlessGranted('delete', $task);
 
