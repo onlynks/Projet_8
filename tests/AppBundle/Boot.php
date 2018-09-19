@@ -50,11 +50,15 @@ class Boot extends WebTestCase
         ));
     }
 
-    protected function createRandomTask() {
+    protected function createRandomTask($user = null) {
 
         $task = new Task();
         $task->setTitle('taskTest');
         $task->setContent('taskContentTest');
+        if($user) {
+            $this->em->merge($user);
+            $task->setUser($user);
+        }
 
         $this->em->persist($task);
         $this->em->flush();
@@ -69,17 +73,20 @@ class Boot extends WebTestCase
         $tasksCreated= $this->em->getRepository(Task::class)->findAll();
 
         foreach($tasksCreated as $task) {
-            $this->em->remove($task);
-            $this->em->flush();
+            $taskToDelete = $this->em->merge($task);
+            $this->em->remove($taskToDelete);
         }
 
         $usersCreated = $this->em->getRepository(User::class)->findAll();
 
         foreach($usersCreated as $user) {
-            $this->em->remove($user);
-            $this->em->flush();
+            $userToDelete = $this->em->merge($user);
+            $this->em->remove($userToDelete);
         }
+
+        $this->em->flush();
     }
+
 
 
 }

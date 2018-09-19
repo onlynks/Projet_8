@@ -1,18 +1,18 @@
 PHPUnit 7.3.1 by Sebastian Bergmann and contributors.
 
-C:\xampp\htdocs\projet8-TodoList\tests\AppBundle\Controller\UserControllerTest.php:77:
-class AppBundle\Entity\User#153 (5) {
-  private $id =>
-  int(20)
-  private $username =>
-  string(5) "admin"
-  private $password =>
-  string(6) "admin!"
-  private $roles =>
-  array(1) {
-    [0] =>
-    string(10) "ROLE_ADMIN"
-  }
-  private $email =>
-  string(15) "admin@gmail.com"
-}
+E                                                                   1 / 1 (100%)
+
+Time: 3.65 seconds, Memory: 24.00MB
+
+There was 1 error:
+
+1) Tests\AppBundle\Controller\TaskControllerTest::testDeleteAsUser
+BadMethodCallException: Undefined method 'getRepository'. The method name must start with either findBy, findOneBy or countBy!
+
+C:\xampp\htdocs\projet8-TodoList\vendor\doctrine\orm\lib\Doctrine\ORM\EntityRepository.php:238
+C:\xampp\htdocs\projet8-TodoList\tests\AppBundle\Controller\TaskControllerTest.php:84
+
+ERRORS!
+Tests: 1, Assertions: 0, Errors: 1.
+
+Remaining deprecation notices (1)

@@ -53,7 +53,7 @@ class TaskControllerTest extends Boot
         $this->assertContains('La tâche a bien été ajoutée.', $content);
     }
 
-    public function testDelete()
+    public function testDeleteAsAdmin()
     {
         $client = static::logAsAdmin();
 
@@ -77,11 +77,13 @@ class TaskControllerTest extends Boot
         $this->assertContains('La tâche a bien été supprimée.', $content);
     }
 
-    public function testDeleteNoAuthor() {
+    public function testDeleteAsUser() {
 
         $client = static::logAsUser();
 
-        $task = $this->createRandomTask();
+        $user = $this->em->getRepository(User::class)->findByUsername('user')[0];
+
+        $task = $this->createRandomTask($user);
 
         $crawler = $client->request('GET', '/tasks');
 
@@ -93,7 +95,6 @@ class TaskControllerTest extends Boot
         $content = $client->getResponse()->getContent();
 
         $this->assertContains('Vous n\'avez pas les droits nécessaires pour supprimer cette tâche.', $content);
-
     }
 
     public function testUpdate() {
