@@ -5,23 +5,30 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Task;
 use AppBundle\Form\TaskType;
 use AppBundle\Repository\TaskRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\{Request,Response};
 
 
 class TaskController extends Controller
 {
     /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+
+    public function __construct(TaskRepository $taskRepository)
+    {
+        $this->taskRepository = $taskRepository->repository;
+    }
+
+    /**
      * @Route("/tasks", name="task_list",methods={"GET"})
      */
-    public function listAction(TaskRepository $repository)
+    public function listAction()
     {
         return $this->render('task/list.html.twig', [
-            'tasks' => $repository->findAll(),
+            'tasks' => $this->taskRepository->findAll(),
         ]);
     }
 

@@ -3,20 +3,23 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Task;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
-class TaskRepository extends ServiceEntityRepository
+class TaskRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @var EntityRepository
+     */
+    public $repository;
+
+    public function __construct(EntityManager $entityManager)
     {
-        parent::__construct($registry, Task::class);
+        $this->repository = $entityManager->getRepository(Task::class);
     }
 
     public function getLast(){
-        return $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('t')
-            ->from('AppBundle:Task', 't')
+        return $qb = $this->repository->createQueryBuilder('t')
             ->orderBy('t.id','DESC')
             ->setMaxResults(1)
             ->getQuery()
