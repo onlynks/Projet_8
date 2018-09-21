@@ -4,6 +4,7 @@ namespace Tests\AppBundle;
 
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
+use AppBundle\Repository\TaskRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class Boot extends WebTestCase
@@ -50,36 +51,34 @@ class Boot extends WebTestCase
         ));
     }
 
-    protected function createRandomTask() {
+    protected function createRandomTask($taskRepository, $user = null) {
 
         $task = new Task();
         $task->setTitle('taskTest');
         $task->setContent('taskContentTest');
+        if($user) {
+            $task->setUser($user);
+        }
 
         $this->em->persist($task);
         $this->em->flush();
 
-        $lastTask = $this->em->getRepository(Task::class)->getLast();
+        $lastTask = $taskRepository->getLast();
 
         return $lastTask;
     }
 
     protected function tearDown()
     {
-        $tasksCreated= $this->em->getRepository(Task::class)->findAll();
-
-        foreach($tasksCreated as $task) {
-            $this->em->remove($task);
-            $this->em->flush();
-        }
-
         $usersCreated = $this->em->getRepository(User::class)->findAll();
 
         foreach($usersCreated as $user) {
             $this->em->remove($user);
-            $this->em->flush();
         }
+
+        $this->em->flush();
     }
+
 
 
 }

@@ -4,27 +4,37 @@ namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
+use AppBundle\Repository\TaskRepository;
 use Tests\AppBundle\Boot;
 
 class TaskControllerTest extends Boot
 {
+    protected  $taskRepository;
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->taskRepository = new TaskRepository($this->em);
+    }
+
     public function testList()
     {
-        $em = $this->em;
-
         $client = static::logAsAdmin();
+
+        for($i = 1; $i<5; $i++) {
+            $this->createRandomTask($this->taskRepository);
+        }
 
         $crawler = $client->request('GET','/tasks');
 
         $selections = $crawler->filter('div > h4 > a')->links();
-
         $data = [];
 
         foreach ($selections as $selection){
             $data[] = $selection->getNode()->textContent;
         }
 
-        $tasks = $em->getRepository(Task::class)->findAll();
+        $tasks = $this->taskRepository->repository->findAll();
 
         $taskName = [];
 
@@ -54,7 +64,7 @@ class TaskControllerTest extends Boot
         $this->assertContains('La tâche a bien été ajoutée.', $content);
     }
 
-    public function testDelete()
+    public function testDeleteAsAdmin()
     {
         $client = static::logAsAdmin();
 
@@ -65,7 +75,7 @@ class TaskControllerTest extends Boot
         $this->em->persist($task);
         $this->em->flush();
 
-        $lastTask = $this->em->getRepository(Task::class)->getLast();
+        $lastTask = $this->taskRepository->getLast();
         $crawler = $client->request('GET', '/tasks');
 
         $form = $crawler->filter('form[action="/tasks/'.$lastTask->getId().'/delete"] > button')->form();
@@ -78,28 +88,9 @@ class TaskControllerTest extends Boot
         $this->assertContains('La tâche a bien été supprimée.', $content);
     }
 
-    public function testDeleteNoAuthor() {
-
-        $client = static::logAsUser();
-
-        $task = $this->createRandomTask();
-
-        $crawler = $client->request('GET', '/tasks');
-
-        $form = $crawler->filter('form[action="/tasks/'.$task->getId().'/delete"] > button')->form();
-        $client->submit($form);
-
-        $client->followRedirect();
-
-        $content = $client->getResponse()->getContent();
-
-        $this->assertContains('Vous devez être administrateur pour supprimer cette tâche.', $content);
-
-    }
-
     public function testUpdate() {
 
-        $task = $this->createRandomTask();
+        $task = $this->createRandomTask($this->taskRepository);
 
         $client = static::logAsAdmin();
 
@@ -116,7 +107,7 @@ class TaskControllerTest extends Boot
 
         $client->followRedirect();
 
-        $updatedTask = $this->em->getRepository(Task::class)->find($task);
+        $updatedTask = $this->taskRepository->repository->find($task);
 
         $taskData = [$updatedTask->getTitle(), $updatedTask->getContent()];
 
@@ -135,7 +126,7 @@ class TaskControllerTest extends Boot
         $this->em->persist($task);
         $this->em->flush();
 
-        $taskToTest = $this->em->getRepository(Task::class)->getLast();
+        $taskToTest = $this->taskRepository->getLast();
 
         $crawler = $client->request('GET', '/tasks');
 
@@ -146,6 +137,18 @@ class TaskControllerTest extends Boot
         $client->followRedirect();
 
         $this->assertContains('La tâche '.$task->getTitle().' a bien été marquée comme faite.', $client->getResponse()->getContent());
+    }
+
+    public function tearDown()
+    {
+        $tasksCreated = $this->taskRepository->repository->findAll();
+
+        foreach($tasksCreated as $task) {
+            $this->em->remove($task);
+        }
+        $this->em->flush();
+
+        parent::tearDown();
     }
 
 }
