@@ -18,22 +18,30 @@ class User implements UserInterface
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @var int
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=25, unique=true)
      * @Assert\NotBlank(message="Vous devez saisir un nom d'utilisateur.")
+     *
+     * @var string
      */
-    private $username;
+    private $username = "";
 
     /**
      * @ORM\Column(type="string", length=64)
+     *
+     * @var string
      */
-    private $password;
+    private $password = "";
 
     /**
      * @ORM\Column(type="array")
+     *
+     * @var array
      */
     private $roles = ['ROLE_USER'];
 
@@ -41,20 +49,22 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=60, unique=true)
      * @Assert\NotBlank(message="Vous devez saisir une adresse email.")
      * @Assert\Email(message="Le format de l'adresse n'est pas correcte.")
+     *
+     * @var string
      */
-    private $email;
+    private $email = "";
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-    public function setUsername($username)
+    public function setUsername(string $username)
     {
         $this->username = $username;
     }
@@ -64,32 +74,32 @@ class User implements UserInterface
         return null;
     }
 
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
     }
 
-    public function setPassword($password)
+    public function setPassword(string $password)
     {
         $this->password = $password;
     }
 
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function setEmail($email)
+    public function setEmail(string $email)
     {
         $this->email = $email;
     }
 
-    public function getRoles()
+    public function getRoles(): array
     {
         return $this->roles;
     }
 
-    public function setRoles($roles)
+    public function setRoles(array $roles)
     {
         $this->roles = $roles;
     }
@@ -98,7 +108,7 @@ class User implements UserInterface
     {
     }
 
-    public function isAdmin()
+    public function isAdmin(): bool
     {
         return ($this->getRoles() === ['ROLE_ADMIN']) ?: false;
     }
