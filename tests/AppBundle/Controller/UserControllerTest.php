@@ -59,7 +59,7 @@ class UserControllerTest extends Boot
         $user->setUsername('testUser');
         $user->setPassword('test');
         $user->setEmail('test@gmail.com');
-        $user->setRoles('ROLE_USER');
+        $user->setRoles(['ROLE_USER']);
         $this->em->persist($user);
         $this->em->flush();
 
