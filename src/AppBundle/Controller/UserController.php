@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
 use AppBundle\Repository\UserRepository;
+use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,11 +13,27 @@ use Symfony\Component\HttpFoundation\Request;
 class UserController extends Controller
 {
     /**
+     * @var UserRepository
+     */
+    private $userRepository;
+
+    /**
+     * @var EntityManager
+     */
+    private $em;
+
+    public function __construct(UserRepository $userRepository, EntityManager $entityManager)
+    {
+        $this->userRepository = $userRepository->repository;
+        $this->em = $entityManager;
+    }
+
+    /**
      * @Route("/users", name="user_list")
      */
-    public function listAction(UserRepository $userRepository)
+    public function listAction()
     {
-        return $this->render('user/list.html.twig', ['users' => $userRepository->findAll()]);
+        return $this->render('user/list.html.twig', ['users' => $this->userRepository->findAll()]);
     }
 
     /**
@@ -30,12 +47,11 @@ class UserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
             $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
 
-            $em->persist($user);
-            $em->flush();
+            $this->em->persist($user);
+            $this->em->flush();
 
             $this->addFlash('success', "Vous avez créé un utilisateur.");
 
@@ -58,7 +74,7 @@ class UserController extends Controller
             $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
 
-            $this->getDoctrine()->getManager()->flush();
+            $this->em->flush();
 
             $this->addFlash('success', "L'utilisateur a bien été modifié");
 

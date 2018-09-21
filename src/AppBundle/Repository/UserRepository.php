@@ -3,20 +3,23 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
-class UserRepository extends ServiceEntityRepository
+class UserRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @var EntityRepository
+     */
+    public $repository;
+
+    public function __construct(EntityManager $entityManager)
     {
-        parent::__construct($registry, User::class);
+        $this->repository = $entityManager->getRepository(User::class);
     }
 
     public function getLast(){
-        return $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('u')
-            ->from('AppBundle:User', 'u')
+        return $qb = $this->repository->createQueryBuilder('u')
             ->orderBy('u.id','DESC')
             ->setMaxResults(1)
             ->getQuery()
