@@ -32,7 +32,7 @@ class TaskController extends Controller
     /**
      * @Route("/tasks", name="task_list",methods={"GET"})
      */
-    public function listAction()
+    public function list()
     {
         return $this->render('task/list.html.twig', [
             'tasks' => $this->taskRepository->findAll(),
@@ -42,7 +42,7 @@ class TaskController extends Controller
     /**
      * @Route("/tasks/create", name="task_create", methods={"POST", "GET"})
      */
-    public function createAction(Request $request)
+    public function create(Request $request)
     {
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task);
@@ -64,9 +64,9 @@ class TaskController extends Controller
     }
 
     /**
-     * @Route("/tasks/{id}/edit", name="task_edit")
+     * @Route("/tasks/{id}/edit", name="task_edit", methods={"PUT", "GET"})
      */
-    public function editAction(Task $task, Request $request)
+    public function edit(Task $task, Request $request)
     {
         $form = $this->createForm(TaskType::class, $task);
 
@@ -88,7 +88,7 @@ class TaskController extends Controller
     /**
      * @Route("/tasks/{id}/toggle", name="task_toggle")
      */
-    public function toggleTaskAction(Task $task)
+    public function toggleTask(Task $task)
     {
         $task->toggle(!$task->isDone());
         $this->em->flush();
@@ -101,7 +101,7 @@ class TaskController extends Controller
     /**
      * @Route("/tasks/{id}/delete", name="task_delete")
      */
-    public function deleteTaskAction(Task $task, Request $request): Response
+    public function deleteTask(Task $task, Request $request): Response
     {
         $this->denyAccessUnlessGranted('delete', $task);
 

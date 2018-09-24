@@ -29,17 +29,17 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/users", name="user_list")
+     * @Route("/users", name="user_list", methods={"GET"})
      */
-    public function listAction()
+    public function list()
     {
         return $this->render('user/list.html.twig', ['users' => $this->userRepository->findAll()]);
     }
 
     /**
-     * @Route("/users/create", name="user_create")
+     * @Route("/users/create", name="user_create", methods={"POST", "GET"})
      */
-    public function createAction(Request $request)
+    public function create(Request $request)
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -62,9 +62,9 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/users/{id}/edit", name="user_edit")
+     * @Route("/users/{id}/edit", name="user_edit", methods={"PUT", "GET"})
      */
-    public function editAction(User $user, Request $request)
+    public function edit(User $user, Request $request)
     {
         $form = $this->createForm(UserType::class, $user);
 
